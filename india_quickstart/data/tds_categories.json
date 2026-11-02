@@ -1,0 +1,10 @@
+[
+  {"section": "194C", "description": "Payment to Contractors / Sub-contractors (Individual/HUF)", "rate": 1.0, "threshold": 30000.0},
+  {"section": "194C", "description": "Payment to Contractors / Sub-contractors (Company/Firm)", "rate": 2.0, "threshold": 30000.0},
+  {"section": "194J", "description": "Fees for Professional Services", "rate": 10.0, "threshold": 30000.0},
+  {"section": "194J", "description": "Fees for Technical Services (FTS)", "rate": 2.0, "threshold": 30000.0},
+  {"section": "194I", "description": "Rent of Plant and Machinery", "rate": 2.0, "threshold": 240000.0},
+  {"section": "194I", "description": "Rent of Land, Building or Furniture", "rate": 10.0, "threshold": 240000.0},
+  {"section": "194H", "description": "Commission or Brokerage", "rate": 5.0, "threshold": 15000.0},
+  {"section": "194Q", "description": "TDS on Purchase of Goods", "rate": 0.1, "threshold": 5000000.0}
+]

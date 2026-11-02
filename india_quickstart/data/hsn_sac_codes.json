@@ -1,0 +1,14 @@
+[
+  {"hsn_code": "998311", "description": "Management consulting and management services", "gst_rate": 18.0},
+  {"hsn_code": "998313", "description": "Information technology consulting and support services", "gst_rate": 18.0},
+  {"hsn_code": "998314", "description": "Information technology design and development services", "gst_rate": 18.0},
+  {"hsn_code": "998315", "description": "Hosting and information technology infrastructure provisioning services", "gst_rate": 18.0},
+  {"hsn_code": "998316", "description": "IT infrastructure and network management services", "gst_rate": 18.0},
+  {"hsn_code": "998211", "description": "Legal advisory and representation services", "gst_rate": 18.0},
+  {"hsn_code": "998221", "description": "Financial auditing and accounting services", "gst_rate": 18.0},
+  {"hsn_code": "847130", "description": "Portable automatic data processing machines (Laptops, tablets)", "gst_rate": 18.0},
+  {"hsn_code": "851713", "description": "Smartphones and mobile communication devices", "gst_rate": 18.0},
+  {"hsn_code": "482010", "description": "Registers, account books, note books, order books, receipt books", "gst_rate": 18.0},
+  {"hsn_code": "997212", "description": "Commercial property rental or leasing services", "gst_rate": 18.0},
+  {"hsn_code": "996511", "description": "Road transport services of goods by freight (GTA)", "gst_rate": 5.0}
+]

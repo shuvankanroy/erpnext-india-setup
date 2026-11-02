@@ -1,0 +1,149 @@
+<div class="tax-invoice-wrapper" style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 12px; color: #222; padding: 20px;">
+    <!-- Header -->
+    <div style="text-align: center; border-bottom: 2px solid #333; padding-bottom: 10px; margin-bottom: 15px;">
+        <h2 style="margin: 0; text-transform: uppercase; font-size: 20px; font-weight: 700;">TAX INVOICE</h2>
+        <div style="font-size: 11px; color: #555;">(Issued under Section 31 of CGST Act, 2017)</div>
+    </div>
+
+    <!-- Company & Invoice Meta Details -->
+    <table style="width: 100%; margin-bottom: 15px; border-collapse: collapse;">
+        <tr>
+            <td style="width: 50%; vertical-align: top; padding-right: 15px;">
+                <h3 style="margin: 0 0 5px 0; font-size: 15px; font-weight: 700;">{{ doc.company }}</h3>
+                <div>{{ doc.company_address_display or "" }}</div>
+                <div style="margin-top: 5px;"><strong>GSTIN:</strong> {{ doc.company_gstin or frappe.db.get_value("Company", doc.company, "gstin") or "" }}</div>
+                <div><strong>PAN:</strong> {{ frappe.db.get_value("Company", doc.company, "pan_number") or "" }}</div>
+                <div><strong>State:</strong> {{ frappe.db.get_value("Company", doc.company, "gst_state") or "" }} (Code: {{ frappe.db.get_value("Company", doc.company, "gst_state_number") or "" }})</div>
+            </td>
+            <td style="width: 50%; vertical-align: top; border-left: 1px solid #ddd; padding-left: 15px;">
+                <table style="width: 100%; border-collapse: collapse;">
+                    <tr>
+                        <td style="padding: 2px 0;"><strong>Invoice No:</strong></td>
+                        <td style="padding: 2px 0; text-align: right;">{{ doc.name }}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 2px 0;"><strong>Invoice Date:</strong></td>
+                        <td style="padding: 2px 0; text-align: right;">{{ frappe.utils.formatdate(doc.posting_date, "dd-MM-yyyy") }}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 2px 0;"><strong>Due Date:</strong></td>
+                        <td style="padding: 2px 0; text-align: right;">{{ frappe.utils.formatdate(doc.due_date, "dd-MM-yyyy") if doc.due_date else "" }}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 2px 0;"><strong>Place of Supply:</strong></td>
+                        <td style="padding: 2px 0; text-align: right;"><strong>{{ doc.place_of_supply or doc.shipping_address_display or "Intra-State" }}</strong></td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+
+    <!-- Buyer Details -->
+    <table style="width: 100%; margin-bottom: 15px; border: 1px solid #ddd; border-collapse: collapse; background: #fafafa;">
+        <tr>
+            <td style="width: 50%; padding: 10px; border-right: 1px solid #ddd; vertical-align: top;">
+                <div style="font-weight: 700; margin-bottom: 5px; text-transform: uppercase; font-size: 11px; color: #555;">Details of Receiver (Billed To):</div>
+                <div style="font-weight: 700; font-size: 13px;">{{ doc.customer_name }}</div>
+                <div>{{ doc.address_display or "" }}</div>
+                <div style="margin-top: 4px;"><strong>GSTIN:</strong> {{ doc.customer_gstin or "" }}</div>
+                <div><strong>PAN:</strong> {{ frappe.db.get_value("Customer", doc.customer, "pan_number") or "" }}</div>
+            </td>
+            <td style="width: 50%; padding: 10px; vertical-align: top;">
+                <div style="font-weight: 700; margin-bottom: 5px; text-transform: uppercase; font-size: 11px; color: #555;">Details of Consignee (Shipped To):</div>
+                <div style="font-weight: 700; font-size: 13px;">{{ doc.customer_name }}</div>
+                <div>{{ doc.shipping_address_display or doc.address_display or "" }}</div>
+            </td>
+        </tr>
+    </table>
+
+    <!-- Items Table -->
+    <table style="width: 100%; border-collapse: collapse; margin-bottom: 15px;">
+        <thead>
+            <tr style="background: #2b3a4a; color: white;">
+                <th style="padding: 6px; border: 1px solid #333; text-align: center; width: 4%;">#</th>
+                <th style="padding: 6px; border: 1px solid #333; text-align: left; width: 36%;">Item & Description</th>
+                <th style="padding: 6px; border: 1px solid #333; text-align: center; width: 12%;">HSN/SAC</th>
+                <th style="padding: 6px; border: 1px solid #333; text-align: right; width: 8%;">Qty</th>
+                <th style="padding: 6px; border: 1px solid #333; text-align: right; width: 10%;">Rate (₹)</th>
+                <th style="padding: 6px; border: 1px solid #333; text-align: right; width: 10%;">Disc (₹)</th>
+                <th style="padding: 6px; border: 1px solid #333; text-align: right; width: 20%;">Taxable Value (₹)</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in doc.items %}
+            <tr>
+                <td style="padding: 6px; border: 1px solid #ddd; text-align: center;">{{ row.idx }}</td>
+                <td style="padding: 6px; border: 1px solid #ddd;">
+                    <strong>{{ row.item_name }}</strong>
+                    {% if row.description and row.description != row.item_name %}
+                    <div style="font-size: 10px; color: #666;">{{ row.description }}</div>
+                    {% endif %}
+                </td>
+                <td style="padding: 6px; border: 1px solid #ddd; text-align: center;">{{ row.gst_hsn_code or "" }}</td>
+                <td style="padding: 6px; border: 1px solid #ddd; text-align: right;">{{ row.qty }} {{ row.uom }}</td>
+                <td style="padding: 6px; border: 1px solid #ddd; text-align: right;">{{ frappe.utils.fmt_money(row.rate, currency=doc.currency) }}</td>
+                <td style="padding: 6px; border: 1px solid #ddd; text-align: right;">{{ frappe.utils.fmt_money(row.discount_amount, currency=doc.currency) if row.discount_amount else "0.00" }}</td>
+                <td style="padding: 6px; border: 1px solid #ddd; text-align: right; font-weight: 600;">{{ frappe.utils.fmt_money(row.amount, currency=doc.currency) }}</td>
+            </tr>
+            {% endfor %}
+            <tr style="font-weight: 700; background: #f5f5f5;">
+                <td colspan="6" style="padding: 6px; border: 1px solid #ddd; text-align: right;">Total Taxable Value:</td>
+                <td style="padding: 6px; border: 1px solid #ddd; text-align: right;">{{ frappe.utils.fmt_money(doc.net_total, currency=doc.currency) }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- Taxes & Summary Breakdown -->
+    <table style="width: 100%; border-collapse: collapse; margin-bottom: 15px;">
+        <tr>
+            <td style="width: 55%; vertical-align: top; padding-right: 15px;">
+                <div style="font-size: 11px;">
+                    <strong>Amount in Words:</strong><br>
+                    <span style="font-style: italic;">{{ frappe.utils.money_in_words(doc.grand_total, doc.currency) }}</span>
+                </div>
+                {% if doc.terms %}
+                <div style="margin-top: 15px; font-size: 11px;">
+                    <strong>Terms & Conditions:</strong><br>
+                    <div style="color: #666;">{{ doc.terms }}</div>
+                </div>
+                {% endif %}
+            </td>
+            <td style="width: 45%; vertical-align: top;">
+                <table style="width: 100%; border-collapse: collapse;">
+                    {% for tax in doc.taxes %}
+                    {% if tax.tax_amount != 0 %}
+                    <tr>
+                        <td style="padding: 4px; border-bottom: 1px solid #eee;">{{ tax.description }}</td>
+                        <td style="padding: 4px; border-bottom: 1px solid #eee; text-align: right;">{{ frappe.utils.fmt_money(tax.tax_amount, currency=doc.currency) }}</td>
+                    </tr>
+                    {% endif %}
+                    {% endfor %}
+                    {% if doc.rounding_adjustment %}
+                    <tr>
+                        <td style="padding: 4px; border-bottom: 1px solid #eee;">Rounding Adjustment (+/-)</td>
+                        <td style="padding: 4px; border-bottom: 1px solid #eee; text-align: right;">{{ frappe.utils.fmt_money(doc.rounding_adjustment, currency=doc.currency) }}</td>
+                    </tr>
+                    {% endif %}
+                    <tr style="font-weight: 700; font-size: 14px; background: #eef2f6;">
+                        <td style="padding: 6px; border: 1px solid #ccd;">Invoice Grand Total:</td>
+                        <td style="padding: 6px; border: 1px solid #ccd; text-align: right; color: #1e3a8a;">₹ {{ frappe.utils.fmt_money(doc.rounded_total or doc.grand_total, currency=doc.currency) }}</td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+
+    <!-- Sign-off -->
+    <table style="width: 100%; margin-top: 30px; border-top: 1px solid #ddd; padding-top: 10px;">
+        <tr>
+            <td style="width: 60%; font-size: 10px; color: #777;">
+                Certified that the particulars given above are true and correct.<br>
+                This is a Computer Generated Tax Invoice.
+            </td>
+            <td style="width: 40%; text-align: right; vertical-align: bottom;">
+                <div style="font-size: 11px; font-weight: 700;">For {{ doc.company }}</div>
+                <div style="margin-top: 40px; font-size: 11px; border-top: 1px dashed #999; display: inline-block; padding-top: 4px;">Authorised Signatory</div>
+            </td>
+        </tr>
+    </table>
+</div>
